@@ -1,15 +1,16 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutterexamapp/core/constants/strings.dart';
+import 'package:flutterexamapp/core/enums/platform_type_enum.dart';
 import 'package:flutterexamapp/features/domain/model/person_model.dart';
 import 'package:flutterexamapp/features/presentation/person_details_screen/person_details_screen.dart';
 import 'package:flutterexamapp/features/presentation/person_list_screen/bloc/person_list_bloc.dart';
 import 'package:flutterexamapp/features/presentation/person_list_screen/bloc/person_list_state.dart';
 import 'package:flutterexamapp/features/presentation/widgets/app_image_viewer.dart';
+import 'package:flutterexamapp/features/presentation/widgets/app_not_supported_widget.dart';
 import 'package:flutterexamapp/features/presentation/widgets/app_scaffold.dart';
 import 'package:go_router/go_router.dart';
 
@@ -20,22 +21,54 @@ class PersonListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      title: Strings.titlePersonList.toUpperCase(),
-      body: Scrollbar(
-        thickness: 2.w,
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-            child: const Column(
-              children: [
-                _ListContainer(),
-                _BottomProgressIndicator(),
-              ],
+    return BlocBuilder<PersonListBloc, PersonListState>(
+      buildWhen: (prev, current) => prev.platformType != current.platformType,
+      builder: (context, state) {
+        if (state.platformType == PlatformTypeEnum.notSupported) {
+          return const AppNotSupportedWidget();
+        }
+        return AppScaffold(
+          title: Strings.titlePersonList.toUpperCase(),
+          body: Scrollbar(
+            thickness: 2.w,
+            child: SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+                child: const Column(
+                  children: [
+                    _Actions(),
+                    _ListContainer(),
+                    _BottomProgressIndicator(),
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
+    );
+  }
+}
+
+class _Actions extends StatelessWidget {
+  const _Actions();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<PersonListBloc, PersonListState>(
+      child: const SizedBox(),
+      listenWhen: (prev, current) => prev.action != current.action,
+      listener: (context, state) {
+        final action = state.action;
+        switch (action) {
+          case PersonListActionEnum.initial:
+            break;
+          case PersonListActionEnum.goToDetailPage:
+            final item = state.selectedItem;
+            context.pushNamed(PersonDetailsScreen.routeName, extra: item);
+            break;
+        }
+      },
     );
   }
 }
@@ -46,7 +79,7 @@ class _ListContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<PersonListBloc>();
-    return BlocConsumer<PersonListBloc, PersonListState>(
+    return BlocBuilder<PersonListBloc, PersonListState>(
       buildWhen: (prev, current) => prev.reloadList != current.reloadList,
       builder: (context, state) {
         final list = bloc.personList;
@@ -59,18 +92,6 @@ class _ListContainer extends StatelessWidget {
             return _ListItem(data: list[i]);
           },
         );
-      },
-      listenWhen: (prev, current) => prev.action != current.action,
-      listener: (context, state) {
-        final action = state.action;
-        switch (action) {
-          case PersonListActionEnum.initial:
-            break;
-          case PersonListActionEnum.goToDetailPage:
-            final item = state.selectedItem;
-            context.pushNamed(PersonDetailsScreen.routeName, extra: item);
-            break;
-        }
       },
     );
   }

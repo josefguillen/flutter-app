@@ -9,4 +9,5 @@ class Strings {
   static const ip = "IP";
   static const macAddress = "Mac Address";
   static const website = "Website";
+  static const platformNotSupported = "Platform not supported";
 }

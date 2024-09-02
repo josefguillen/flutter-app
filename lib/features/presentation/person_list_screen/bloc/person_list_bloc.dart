@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutterexamapp/core/enums/platform_type_enum.dart';
 import 'package:flutterexamapp/features/domain/model/person_model.dart';
 import 'package:flutterexamapp/features/domain/usecase/person_list_feature_usecase.dart';
 import 'package:flutterexamapp/features/presentation/person_list_screen/bloc/person_list_state.dart';
@@ -18,7 +19,11 @@ class PersonListBloc extends Cubit<PersonListState> {
   List<PersonModel> personList = [];
 
   void initialize() {
-    populateInitList();
+    final platformType = personListFeatureUseCase.getPlatformType.invoke();
+    emit(state.copyWith(platformType: platformType));
+    if (platformType != PlatformTypeEnum.notSupported) {
+      populateInitList();
+    }
   }
 
   Future<void> populateInitList() async {
