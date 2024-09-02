@@ -7,7 +7,6 @@ import 'package:flutterexamapp/features/domain/repository/person_repository.dart
 import 'package:flutterexamapp/features/domain/usercase/person/get_initial_person_list.dart';
 import 'package:flutterexamapp/features/domain/usercase/person/get_next_person_list.dart';
 import 'package:flutterexamapp/features/domain/usercase/person/person_list_feature_usecase.dart';
-import 'package:flutterexamapp/features/presentation/person_details_screen/bloc/person_details_bloc.dart';
 import 'package:flutterexamapp/features/presentation/person_list_screen/bloc/person_list_bloc.dart';
 import 'package:get_it/get_it.dart';
 
@@ -46,5 +45,4 @@ Future<void> init() async {
       personListFeatureUseCase: vf.call(),
     ),
   );
-  vf.registerFactory<PersonDetailsBloc>(() => PersonDetailsBloc());
 }

@@ -3,6 +3,11 @@ import 'package:flutterexamapp/features/domain/model/person_model.dart';
 import 'package:flutterexamapp/features/domain/usercase/person/person_list_feature_usecase.dart';
 import 'package:flutterexamapp/features/presentation/person_list_screen/bloc/person_list_state.dart';
 
+enum PersonListActionEnum {
+  initial,
+  goToDetailPage,
+}
+
 class PersonListBloc extends Cubit<PersonListState> {
   final PersonListFeatureUseCase personListFeatureUseCase;
 
@@ -40,6 +45,16 @@ class PersonListBloc extends Cubit<PersonListState> {
 
   void reloadList() {
     emit(state.copyWith(reloadList: !state.reloadList));
+  }
+
+  void onItemPress(PersonModel item) {
+    emit(
+      state.copyWith(
+        action: PersonListActionEnum.goToDetailPage,
+        selectedItem: item,
+      ),
+    );
+    emit(state.copyWith(action: PersonListActionEnum.initial));
   }
 
 }
