@@ -13,6 +13,11 @@ import 'package:flutterexamapp/features/presentation/widgets/app_image_viewer.da
 import 'package:flutterexamapp/features/presentation/widgets/app_not_supported_widget.dart';
 import 'package:flutterexamapp/features/presentation/widgets/app_scaffold.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
+
+RefreshController refreshController = RefreshController(
+  initialRefresh: false,
+);
 
 class PersonListScreen extends StatelessWidget {
   const PersonListScreen({super.key});
@@ -21,6 +26,7 @@ class PersonListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.read<PersonListBloc>();
     return BlocBuilder<PersonListBloc, PersonListState>(
       buildWhen: (prev, current) => prev.platformType != current.platformType,
       builder: (context, state) {
@@ -29,17 +35,25 @@ class PersonListScreen extends StatelessWidget {
         }
         return AppScaffold(
           title: Strings.titlePersonList.toUpperCase(),
-          body: Scrollbar(
-            thickness: 2.w,
-            child: SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-                child: const Column(
-                  children: [
-                    _Actions(),
-                    _ListContainer(),
-                    _BottomProgressIndicator(),
-                  ],
+          body: SmartRefresher(
+            enablePullDown: true,
+            controller: refreshController,
+            onLoading: () {
+              print("LOADING");
+            },
+            onRefresh: bloc.onRefresh,
+            child: Scrollbar(
+              thickness: 2.w,
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+                  child: const Column(
+                    children: [
+                      _Actions(),
+                      _ListContainer(),
+                      _BottomProgressIndicator(),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -66,6 +80,12 @@ class _Actions extends StatelessWidget {
           case PersonListActionEnum.goToDetailPage:
             final item = state.selectedItem;
             context.pushNamed(PersonDetailsScreen.routeName, extra: item);
+            break;
+          case PersonListActionEnum.refreshFinish:
+            refreshController.refreshCompleted();
+            break;
+          case PersonListActionEnum.refreshFailed:
+            refreshController.refreshFailed();
             break;
         }
       },

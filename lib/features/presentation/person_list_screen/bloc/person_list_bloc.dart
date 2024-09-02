@@ -7,6 +7,8 @@ import 'package:flutterexamapp/features/presentation/person_list_screen/bloc/per
 enum PersonListActionEnum {
   initial,
   goToDetailPage,
+  refreshFinish,
+  refreshFailed,
 }
 
 class PersonListBloc extends Cubit<PersonListState> {
@@ -27,14 +29,23 @@ class PersonListBloc extends Cubit<PersonListState> {
   }
 
   Future<void> populateInitList() async {
+    personList.clear();
     final result = await personListFeatureUseCase.getInitialPersonList.invoke();
     result.fold(
-      (failed) {},
+      (failed) {
+        emit(state.copyWith(action: PersonListActionEnum.refreshFailed));
+      },
       (success) {
         personList.addAll(success.data ?? []);
-        reloadList();
+        emit(
+          state.copyWith(
+            reloadList: !state.reloadList,
+            action: PersonListActionEnum.refreshFinish,
+          ),
+        );
       },
     );
+    emit(state.copyWith(action: PersonListActionEnum.initial));
   }
 
   Future<void> populateNextList() async {
@@ -43,13 +54,9 @@ class PersonListBloc extends Cubit<PersonListState> {
       (failed) {},
       (success) {
         personList.addAll(success.data ?? []);
-        reloadList();
+        emit(state.copyWith(reloadList: !state.reloadList));
       },
     );
-  }
-
-  void reloadList() {
-    emit(state.copyWith(reloadList: !state.reloadList));
   }
 
   void onItemPress(PersonModel item) {
@@ -60,6 +67,10 @@ class PersonListBloc extends Cubit<PersonListState> {
       ),
     );
     emit(state.copyWith(action: PersonListActionEnum.initial));
+  }
+
+  Future<void> onRefresh() async {
+    await populateInitList();
   }
 
 }
