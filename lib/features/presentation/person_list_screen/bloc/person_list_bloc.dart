@@ -31,7 +31,12 @@ class PersonListBloc extends Cubit<PersonListState> {
   Future<void> populateInitList({bool fromInit = false}) async {
     personList.clear();
     if (fromInit) {
-      emit(state.copyWith(isLoading: true));
+      emit(
+        state.copyWith(
+          isLoading: true,
+          isError: false,
+        ),
+      );
     }
     final result = await personListFeatureUseCase.getInitialPersonList.invoke();
     result.fold(
@@ -40,6 +45,8 @@ class PersonListBloc extends Cubit<PersonListState> {
           state.copyWith(
             action: !fromInit ? PersonListActionEnum.refreshFailed : PersonListActionEnum.initial,
             isLoading: false,
+            isError: fromInit ? true : false,
+            message: failed.message,
           ),
         );
       },
@@ -50,6 +57,7 @@ class PersonListBloc extends Cubit<PersonListState> {
             reloadList: !state.reloadList,
             action: !fromInit ? PersonListActionEnum.refreshFinish : PersonListActionEnum.initial,
             isLoading: false,
+            isError: false,
           ),
         );
       },

@@ -10,4 +10,5 @@ class Strings {
   static const macAddress = "Mac Address";
   static const website = "Website";
   static const platformNotSupported = "Platform not supported";
+  static const retry = "Retry";
 }

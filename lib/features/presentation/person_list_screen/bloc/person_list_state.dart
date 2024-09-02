@@ -9,6 +9,8 @@ class PersonListState extends Equatable {
   final PersonModel? selectedItem;
   final PlatformTypeEnum? platformType;
   final bool isLoading;
+  final bool isError;
+  final String message;
 
   const PersonListState({
     this.reloadList = false,
@@ -16,6 +18,8 @@ class PersonListState extends Equatable {
     this.selectedItem,
     this.platformType,
     this.isLoading = false,
+    this.isError = false,
+    this.message = "",
   });
 
   PersonListState copyWith({
@@ -24,6 +28,8 @@ class PersonListState extends Equatable {
     PersonModel? selectedItem,
     PlatformTypeEnum? platformType,
     bool? isLoading,
+    bool? isError,
+    String? message,
   }) =>
       PersonListState(
         reloadList: reloadList ?? this.reloadList,
@@ -31,6 +37,8 @@ class PersonListState extends Equatable {
         selectedItem: selectedItem ?? this.selectedItem,
         platformType: platformType ?? this.platformType,
         isLoading: isLoading ?? this.isLoading,
+        isError: isError ?? this.isError,
+        message: message ?? this.message,
       );
 
   @override
@@ -40,5 +48,7 @@ class PersonListState extends Equatable {
         selectedItem,
         platformType,
         isLoading,
+        isError,
+        message,
       ];
 }

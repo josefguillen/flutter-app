@@ -29,35 +29,45 @@ class PersonListScreen extends StatelessWidget {
     final bloc = context.read<PersonListBloc>();
     return BlocBuilder<PersonListBloc, PersonListState>(
       buildWhen: (prev, current) =>
-          prev.platformType != current.platformType || prev.isLoading != current.isLoading,
+          prev.platformType != current.platformType ||
+          prev.isLoading != current.isLoading ||
+          prev.isError != current.isError,
       builder: (context, state) {
         if (state.platformType == PlatformTypeEnum.notSupported) {
           return const AppNotSupportedWidget();
         }
-        return AppScaffold(
-          title: Strings.titlePersonList.toUpperCase(),
-          body: state.isLoading
-              ? const _Loading()
-              : SmartRefresher(
-                  enablePullDown: true,
-                  controller: refreshController,
-                  onRefresh: bloc.onRefresh,
-                  child: Scrollbar(
-                    thickness: 2.w,
-                    child: SingleChildScrollView(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-                        child: const Column(
-                          children: [
-                            _Actions(),
-                            _ListContainer(),
-                            _BottomProgressIndicator(),
-                          ],
-                        ),
-                      ),
-                    ),
+        Widget? widget;
+        if (state.isLoading) {
+          widget = const _Loading();
+        }
+        else if (state.isError) {
+          widget = const _ErrorLoadWidget();
+        }
+        else {
+          widget = SmartRefresher(
+            enablePullDown: true,
+            controller: refreshController,
+            onRefresh: bloc.onRefresh,
+            child: Scrollbar(
+              thickness: 2.w,
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+                  child: const Column(
+                    children: [
+                      _Actions(),
+                      _ListContainer(),
+                      _BottomProgressIndicator(),
+                    ],
                   ),
                 ),
+              ),
+            ),
+          );
+        }
+        return AppScaffold(
+          title: Strings.titlePersonList.toUpperCase(),
+          body: widget,
         );
       },
     );
@@ -80,6 +90,30 @@ class _Loading extends StatelessWidget {
     );
   }
 }
+
+class _ErrorLoadWidget extends StatelessWidget {
+  const _ErrorLoadWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = context.read<PersonListBloc>();
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(bloc.state.message),
+        SizedBox(height: 5.h),
+        ElevatedButton(
+          onPressed: () {
+            bloc.populateInitList(fromInit: true);
+          },
+          child: const Text(Strings.retry),
+        ),
+      ],
+    );
+  }
+}
+
 
 class _Actions extends StatelessWidget {
   const _Actions();
