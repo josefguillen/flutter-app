@@ -4,6 +4,10 @@ import 'package:flutterexamapp/features/data/api/person_client.dart';
 import 'package:flutterexamapp/features/data/datasource/person_datasource.dart';
 import 'package:flutterexamapp/features/data/repository/person_repository_impl.dart';
 import 'package:flutterexamapp/features/domain/repository/person_repository.dart';
+import 'package:flutterexamapp/features/domain/usercase/person/get_initial_person_list.dart';
+import 'package:flutterexamapp/features/domain/usercase/person/get_next_person_list.dart';
+import 'package:flutterexamapp/features/domain/usercase/person/person_list_feature_usecase.dart';
+import 'package:flutterexamapp/features/presentation/person_details_screen/bloc/person_details_bloc.dart';
 import 'package:flutterexamapp/features/presentation/person_list_screen/bloc/person_list_bloc.dart';
 import 'package:get_it/get_it.dart';
 
@@ -29,8 +33,18 @@ Future<void> init() async {
   );
 
   //USE CASE
+  vf.registerLazySingleton<PersonListFeatureUseCase>(
+    () => PersonListFeatureUseCase(
+      getNextPersonList: GetNextPersonList(personRepository: vf.call()),
+      getInitialPersonList: GetInitialPersonList(personRepository: vf.call()),
+    ),
+  );
 
   //BLOC
-  vf.registerLazySingleton<PersonListBloc>(() => PersonListBloc());
-  vf.registerFactory<PersonListBloc>(() => PersonListBloc());
+  vf.registerLazySingleton<PersonListBloc>(
+    () => PersonListBloc(
+      personListFeatureUseCase: vf.call(),
+    ),
+  );
+  vf.registerFactory<PersonDetailsBloc>(() => PersonDetailsBloc());
 }
