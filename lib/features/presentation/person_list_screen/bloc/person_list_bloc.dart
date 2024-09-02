@@ -9,6 +9,8 @@ enum PersonListActionEnum {
   goToDetailPage,
   refreshFinish,
   refreshFailed,
+  nextPageFinish,
+  nextPageFailed,
 }
 
 class PersonListBloc extends Cubit<PersonListState> {
@@ -58,22 +60,33 @@ class PersonListBloc extends Cubit<PersonListState> {
             action: !fromInit ? PersonListActionEnum.refreshFinish : PersonListActionEnum.initial,
             isLoading: false,
             isError: false,
+            hasMoreData: success.hasNextPage,
           ),
         );
+        print("List Count: ${personList.length}");
       },
     );
     emit(state.copyWith(action: PersonListActionEnum.initial));
   }
 
   Future<void> populateNextList() async {
-    final result = await personListFeatureUseCase.getInitialPersonList.invoke();
+    final result = await personListFeatureUseCase.getNextPersonList.invoke();
     result.fold(
-      (failed) {},
+      (failed) {
+
+      },
       (success) {
         personList.addAll(success.data ?? []);
-        emit(state.copyWith(reloadList: !state.reloadList));
+        emit(
+          state.copyWith(
+            reloadList: !state.reloadList,
+            hasMoreData: success.hasNextPage,
+            action: PersonListActionEnum.nextPageFinish,
+          ),
+        );
       },
     );
+    emit(state.copyWith(action: PersonListActionEnum.initial));
   }
 
   void onItemPress(PersonModel item) {
@@ -88,5 +101,9 @@ class PersonListBloc extends Cubit<PersonListState> {
 
   Future<void> onRefresh() async {
     await populateInitList();
+  }
+
+  Future<void> onLoadMore() async {
+    await populateNextList();
   }
 }

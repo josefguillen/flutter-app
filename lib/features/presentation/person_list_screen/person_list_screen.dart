@@ -18,6 +18,7 @@ import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 RefreshController refreshController = RefreshController(
   initialRefresh: false,
 );
+ScrollController scrollController = ScrollController();
 
 class PersonListScreen extends StatelessWidget {
   const PersonListScreen({super.key});
@@ -29,9 +30,10 @@ class PersonListScreen extends StatelessWidget {
     final bloc = context.read<PersonListBloc>();
     return BlocBuilder<PersonListBloc, PersonListState>(
       buildWhen: (prev, current) =>
-          prev.platformType != current.platformType ||
+      prev.platformType != current.platformType ||
           prev.isLoading != current.isLoading ||
-          prev.isError != current.isError,
+          prev.isError != current.isError ||
+          prev.hasMoreData != current.hasMoreData,
       builder: (context, state) {
         if (state.platformType == PlatformTypeEnum.notSupported) {
           return const AppNotSupportedWidget();
@@ -39,17 +41,19 @@ class PersonListScreen extends StatelessWidget {
         Widget? widget;
         if (state.isLoading) {
           widget = const _Loading();
-        }
-        else if (state.isError) {
+        } else if (state.isError) {
           widget = const _ErrorLoadWidget();
-        }
-        else {
-          widget = SmartRefresher(
-            enablePullDown: true,
-            controller: refreshController,
-            onRefresh: bloc.onRefresh,
-            child: Scrollbar(
-              thickness: 2.w,
+        } else {
+          widget = Scrollbar(
+            controller: scrollController,
+            thickness: 3.w,
+            child: SmartRefresher(
+              enablePullDown: true,
+              enablePullUp: state.hasMoreData,
+              scrollController: scrollController,
+              controller: refreshController,
+              onRefresh: bloc.onRefresh,
+              onLoading: bloc.onLoadMore,
               child: SingleChildScrollView(
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
@@ -57,7 +61,6 @@ class PersonListScreen extends StatelessWidget {
                     children: [
                       _Actions(),
                       _ListContainer(),
-                      _BottomProgressIndicator(),
                     ],
                   ),
                 ),
@@ -114,7 +117,6 @@ class _ErrorLoadWidget extends StatelessWidget {
   }
 }
 
-
 class _Actions extends StatelessWidget {
   const _Actions();
 
@@ -138,6 +140,12 @@ class _Actions extends StatelessWidget {
           case PersonListActionEnum.refreshFailed:
             refreshController.refreshFailed();
             break;
+          case PersonListActionEnum.nextPageFinish:
+            refreshController.loadComplete();
+            break;
+          case PersonListActionEnum.nextPageFailed:
+            refreshController.loadFailed();
+            break;
         }
       },
     );
@@ -154,13 +162,16 @@ class _ListContainer extends StatelessWidget {
       buildWhen: (prev, current) => prev.reloadList != current.reloadList,
       builder: (context, state) {
         final list = bloc.personList;
-        return ListView.builder(
+        return ListView.separated(
           padding: EdgeInsets.zero,
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemCount: list.length,
           itemBuilder: (context, i) {
             return _ListItem(data: list[i]);
+          },
+          separatorBuilder: (context, index) {
+            return SizedBox(height: 5.h);
           },
         );
       },
@@ -180,8 +191,7 @@ class _ListItem extends StatelessWidget {
       onTap: () {
         bloc.onItemPress(data);
       },
-      child: Container(
-        margin: EdgeInsets.only(bottom: 5.h),
+      child: SizedBox(
         height: 100.h,
         child: Card(
           elevation: 3.h,
@@ -215,14 +225,5 @@ class _ListItem extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class _BottomProgressIndicator extends StatelessWidget {
-  const _BottomProgressIndicator();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }

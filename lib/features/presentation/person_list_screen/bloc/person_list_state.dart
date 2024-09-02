@@ -11,6 +11,7 @@ class PersonListState extends Equatable {
   final bool isLoading;
   final bool isError;
   final String message;
+  final bool hasMoreData;
 
   const PersonListState({
     this.reloadList = false,
@@ -20,6 +21,7 @@ class PersonListState extends Equatable {
     this.isLoading = false,
     this.isError = false,
     this.message = "",
+    this.hasMoreData = false,
   });
 
   PersonListState copyWith({
@@ -30,6 +32,7 @@ class PersonListState extends Equatable {
     bool? isLoading,
     bool? isError,
     String? message,
+    bool? hasMoreData,
   }) =>
       PersonListState(
         reloadList: reloadList ?? this.reloadList,
@@ -39,6 +42,7 @@ class PersonListState extends Equatable {
         isLoading: isLoading ?? this.isLoading,
         isError: isError ?? this.isError,
         message: message ?? this.message,
+        hasMoreData: hasMoreData ?? this.hasMoreData,
       );
 
   @override
@@ -50,5 +54,6 @@ class PersonListState extends Equatable {
         isLoading,
         isError,
         message,
+        hasMoreData,
       ];
 }
