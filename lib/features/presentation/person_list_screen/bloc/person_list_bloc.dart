@@ -9,6 +9,7 @@ enum PersonListActionEnum {
   goToDetailPage,
   refreshFinish,
   refreshFailed,
+  nextPageLoading,
   nextPageFinish,
   nextPageFailed,
 }
@@ -63,7 +64,6 @@ class PersonListBloc extends Cubit<PersonListState> {
             hasMoreData: success.hasNextPage,
           ),
         );
-        print("List Count: ${personList.length}");
       },
     );
     emit(state.copyWith(action: PersonListActionEnum.initial));
@@ -73,7 +73,12 @@ class PersonListBloc extends Cubit<PersonListState> {
     final result = await personListFeatureUseCase.getNextPersonList.invoke();
     result.fold(
       (failed) {
-
+        emit(
+          state.copyWith(
+            message: failed.message,
+            action: PersonListActionEnum.nextPageFailed,
+          ),
+        );
       },
       (success) {
         personList.addAll(success.data ?? []);

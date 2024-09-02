@@ -61,7 +61,7 @@ class PersonListScreen extends StatelessWidget {
                     children: [
                       _Actions(),
                       _ListContainer(),
-                      _NoMoreItemsWidget(),
+                      _BottomIndicatorWidget(),
                     ],
                   ),
                 ),
@@ -118,8 +118,8 @@ class _ErrorLoadWidget extends StatelessWidget {
   }
 }
 
-class _NoMoreItemsWidget extends StatelessWidget {
-  const _NoMoreItemsWidget();
+class _BottomIndicatorWidget extends StatelessWidget {
+  const _BottomIndicatorWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -147,6 +147,14 @@ class _NoMoreItemsWidget extends StatelessWidget {
 class _Actions extends StatelessWidget {
   const _Actions();
 
+  void scrollToBottom() {
+    scrollController.animateTo(
+      scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<PersonListBloc, PersonListState>(
@@ -172,6 +180,10 @@ class _Actions extends StatelessWidget {
             break;
           case PersonListActionEnum.nextPageFailed:
             refreshController.loadFailed();
+            scrollToBottom();
+            break;
+          case PersonListActionEnum.nextPageLoading:
+            refreshController.requestLoading();
             break;
         }
       },
