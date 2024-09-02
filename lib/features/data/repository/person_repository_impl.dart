@@ -3,7 +3,7 @@ import 'package:flutterexamapp/core/constants/constants.dart';
 import 'package:flutterexamapp/core/constants/strings.dart';
 import 'package:flutterexamapp/core/model/failed_model.dart';
 import 'package:flutterexamapp/core/model/success_model.dart';
-import 'package:flutterexamapp/features/data/datasource/person_datasource.dart';
+import 'package:flutterexamapp/features/data/datasource/remote/person_datasource.dart';
 import 'package:flutterexamapp/features/domain/mapper/person_entity_extension.dart';
 import 'package:flutterexamapp/features/domain/model/person_model.dart';
 import 'package:flutterexamapp/features/domain/repository/person_repository.dart';
