@@ -9,6 +9,7 @@ import 'package:flutterexamapp/features/domain/model/person_model.dart';
 import 'package:flutterexamapp/features/presentation/person_details_screen/person_details_screen.dart';
 import 'package:flutterexamapp/features/presentation/person_list_screen/bloc/person_list_bloc.dart';
 import 'package:flutterexamapp/features/presentation/person_list_screen/bloc/person_list_state.dart';
+import 'package:flutterexamapp/features/presentation/widgets/app_image_viewer.dart';
 import 'package:flutterexamapp/features/presentation/widgets/app_scaffold.dart';
 import 'package:go_router/go_router.dart';
 
@@ -62,7 +63,7 @@ class _ListContainer extends StatelessWidget {
       listenWhen: (prev, current) => prev.action != current.action,
       listener: (context, state) {
         final action = state.action;
-        switch(action) {
+        switch (action) {
           case PersonListActionEnum.initial:
             break;
           case PersonListActionEnum.goToDetailPage:
@@ -100,38 +101,7 @@ class _ListItem extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10.r),
-                  child: CachedNetworkImage(
-                    imageUrl: data.image,
-                    width: 80.w,
-                    height: 80.h,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) {
-                      return Container(
-                        width: 80.w,
-                        height: 80.h,
-                        color: Colors.black12,
-                        child: Center(
-                          child: SizedBox(
-                            width: 10.h,
-                            height: 10.h,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.w,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                    errorWidget: (_, __, ___) {
-                      return Container(
-                        width: 80.w,
-                        height: 80.h,
-                        color: Colors.black12,
-                      );
-                    },
-                  ),
-                ),
+                AppImageViewer(imageUrl: data.image, width: 80.w, height: 80.h),
                 SizedBox(width: 10.w),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -164,4 +134,3 @@ class _BottomProgressIndicator extends StatelessWidget {
     return Container();
   }
 }
-

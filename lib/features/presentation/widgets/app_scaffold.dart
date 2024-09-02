@@ -16,6 +16,9 @@ class AppScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final titleBarHeight = AppBar().preferredSize.height;
+    final containerHeight = MediaQuery.of(context).size.height - titleBarHeight;
+    final containerWidth = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
@@ -41,7 +44,7 @@ class AppScaffold extends StatelessWidget {
             ),
           ),
         ),
-        body: body,
+        body: SizedBox(width: containerWidth, height: containerHeight, child: body),
       ),
     );
   }

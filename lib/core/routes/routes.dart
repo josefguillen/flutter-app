@@ -1,3 +1,4 @@
+import 'package:flutterexamapp/features/domain/model/person_model.dart';
 import 'package:flutterexamapp/features/presentation/person_details_screen/person_details_screen.dart';
 import 'package:flutterexamapp/features/presentation/person_list_screen/person_list_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -18,8 +19,9 @@ class Routes {
       GoRoute(
         path: PersonDetailsScreen.routeName,
         name: PersonDetailsScreen.routeName,
-        builder: (_, __) {
-          return const PersonDetailsScreen();
+        builder: (context, state) {
+          final data = state.extra as PersonModel;
+          return PersonDetailsScreen(data: data);
         },
       ),
     ],
