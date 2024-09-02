@@ -11,7 +11,7 @@ part 'person_client.g.dart';
 abstract class PersonClient {
   factory PersonClient(Dio dio, {String baseUrl}) = _PersonClient;
 
-  @POST('/v2/users')
+  @GET('/v2/users')
   Future<HttpResponse<PersonResultHeaderEntity>> getPersonList(
     @Query("_quantity") int resultCounts,
   );
