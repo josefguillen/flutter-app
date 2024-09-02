@@ -4,4 +4,9 @@ class Strings {
   static const failedToLoadNextItems = "Failed to load next items";
   static const titlePersonList = "Person List";
   static const titlePersonDetails = "Details";
+  static const username = "Username";
+  static const email = "Email";
+  static const ip = "IP";
+  static const macAddress = "Mac Address";
+  static const website = "Website";
 }

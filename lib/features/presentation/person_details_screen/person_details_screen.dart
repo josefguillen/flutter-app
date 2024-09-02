@@ -41,10 +41,41 @@ class PersonDetailsScreen extends StatelessWidget {
                   fontSize: 18.sp,
                 ),
               ),
+              SizedBox(height: 10.h),
+              _ItemContainer(label: Strings.username, value: data.username),
+              SizedBox(height: 10.h),
+              _ItemContainer(label: Strings.email, value: data.email),
+              SizedBox(height: 10.h),
+              _ItemContainer(label: Strings.ip, value: data.ip),
+              SizedBox(height: 10.h),
+              _ItemContainer(label: Strings.macAddress, value: data.macAddress),
+              SizedBox(height: 10.h),
+              _ItemContainer(label: Strings.website, value: data.website),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ItemContainer extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _ItemContainer({
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label),
+        Text(value),
+      ],
     );
   }
 }
