@@ -1,4 +1,5 @@
 class Strings {
   static const somethingWentWrong = "Something went wrong";
-  static const failedToGetPersonList = "Failed to get person list";
+  static const failedToGetPersonList = "Failed to load items";
+  static const failedToLoadNextItems = "Failed to load next items";
 }

@@ -2,9 +2,10 @@ import 'package:flutterexamapp/core/constants/constants.dart';
 import 'package:flutterexamapp/core/constants/strings.dart';
 import 'package:flutterexamapp/core/model/result_model.dart';
 import 'package:flutterexamapp/features/data/api/person_client.dart';
+import 'package:flutterexamapp/features/domain/entity/person/person_entity.dart';
 
 abstract class PersonDataSource {
-  Future<ResultModel> getPersonList();
+  Future<ResultModel<List<PersonEntity>>> getPersonList();
 }
 
 class PersonDataSourceImpl extends PersonDataSource {
@@ -15,7 +16,7 @@ class PersonDataSourceImpl extends PersonDataSource {
   });
 
   @override
-  Future<ResultModel> getPersonList() async {
+  Future<ResultModel<List<PersonEntity>>> getPersonList() async {
     try {
       final res = await personClient.getPersonList(Constants.MAX_DATA_PER_FETCH);
       if (res.data.code == 200) {
