@@ -105,7 +105,7 @@ class _ListItem extends StatelessWidget {
                       ),
                     );
                   },
-                  errorWidget: (a, b, c) {
+                  errorWidget: (_, __, ___) {
                     return Container(
                       width: 80.w,
                       height: 80.h,
