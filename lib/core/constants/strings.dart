@@ -11,4 +11,5 @@ class Strings {
   static const website = "Website";
   static const platformNotSupported = "Platform not supported";
   static const retry = "Retry";
+  static const noMoreItemsToLoad = "No more items to load";
 }

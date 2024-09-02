@@ -30,7 +30,7 @@ class PersonListScreen extends StatelessWidget {
     final bloc = context.read<PersonListBloc>();
     return BlocBuilder<PersonListBloc, PersonListState>(
       buildWhen: (prev, current) =>
-      prev.platformType != current.platformType ||
+          prev.platformType != current.platformType ||
           prev.isLoading != current.isLoading ||
           prev.isError != current.isError ||
           prev.hasMoreData != current.hasMoreData,
@@ -61,6 +61,7 @@ class PersonListScreen extends StatelessWidget {
                     children: [
                       _Actions(),
                       _ListContainer(),
+                      _NoMoreItemsWidget(),
                     ],
                   ),
                 ),
@@ -113,6 +114,32 @@ class _ErrorLoadWidget extends StatelessWidget {
           child: const Text(Strings.retry),
         ),
       ],
+    );
+  }
+}
+
+class _NoMoreItemsWidget extends StatelessWidget {
+  const _NoMoreItemsWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<PersonListBloc, PersonListState>(
+      buildWhen: (prev, current) => prev.hasMoreData != current.hasMoreData,
+      builder: (context, state) {
+        if (!state.hasMoreData) {
+          return Container(
+            alignment: Alignment.center,
+            height: 40.h,
+            child: const Text(
+              Strings.noMoreItemsToLoad,
+              style: TextStyle(
+                color: Colors.grey,
+              ),
+            ),
+          );
+        }
+        return const SizedBox();
+      },
     );
   }
 }
