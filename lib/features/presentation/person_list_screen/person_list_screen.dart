@@ -28,38 +28,55 @@ class PersonListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = context.read<PersonListBloc>();
     return BlocBuilder<PersonListBloc, PersonListState>(
-      buildWhen: (prev, current) => prev.platformType != current.platformType,
+      buildWhen: (prev, current) =>
+          prev.platformType != current.platformType || prev.isLoading != current.isLoading,
       builder: (context, state) {
         if (state.platformType == PlatformTypeEnum.notSupported) {
           return const AppNotSupportedWidget();
         }
         return AppScaffold(
           title: Strings.titlePersonList.toUpperCase(),
-          body: SmartRefresher(
-            enablePullDown: true,
-            controller: refreshController,
-            onLoading: () {
-              print("LOADING");
-            },
-            onRefresh: bloc.onRefresh,
-            child: Scrollbar(
-              thickness: 2.w,
-              child: SingleChildScrollView(
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-                  child: const Column(
-                    children: [
-                      _Actions(),
-                      _ListContainer(),
-                      _BottomProgressIndicator(),
-                    ],
+          body: state.isLoading
+              ? const _Loading()
+              : SmartRefresher(
+                  enablePullDown: true,
+                  controller: refreshController,
+                  onRefresh: bloc.onRefresh,
+                  child: Scrollbar(
+                    thickness: 2.w,
+                    child: SingleChildScrollView(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+                        child: const Column(
+                          children: [
+                            _Actions(),
+                            _ListContainer(),
+                            _BottomProgressIndicator(),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
         );
       },
+    );
+  }
+}
+
+class _Loading extends StatelessWidget {
+  const _Loading();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: SizedBox(
+        width: 20.h,
+        height: 20.h,
+        child: CircularProgressIndicator(
+          strokeWidth: 2.w,
+        ),
+      ),
     );
   }
 }

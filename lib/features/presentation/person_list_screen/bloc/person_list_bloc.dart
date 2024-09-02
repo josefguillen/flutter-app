@@ -24,23 +24,32 @@ class PersonListBloc extends Cubit<PersonListState> {
     final platformType = personListFeatureUseCase.getPlatformType.invoke();
     emit(state.copyWith(platformType: platformType));
     if (platformType != PlatformTypeEnum.notSupported) {
-      populateInitList();
+      populateInitList(fromInit: true);
     }
   }
 
-  Future<void> populateInitList() async {
+  Future<void> populateInitList({bool fromInit = false}) async {
     personList.clear();
+    if (fromInit) {
+      emit(state.copyWith(isLoading: true));
+    }
     final result = await personListFeatureUseCase.getInitialPersonList.invoke();
     result.fold(
       (failed) {
-        emit(state.copyWith(action: PersonListActionEnum.refreshFailed));
+        emit(
+          state.copyWith(
+            action: !fromInit ? PersonListActionEnum.refreshFailed : PersonListActionEnum.initial,
+            isLoading: false,
+          ),
+        );
       },
       (success) {
         personList.addAll(success.data ?? []);
         emit(
           state.copyWith(
             reloadList: !state.reloadList,
-            action: PersonListActionEnum.refreshFinish,
+            action: !fromInit ? PersonListActionEnum.refreshFinish : PersonListActionEnum.initial,
+            isLoading: false,
           ),
         );
       },
@@ -72,5 +81,4 @@ class PersonListBloc extends Cubit<PersonListState> {
   Future<void> onRefresh() async {
     await populateInitList();
   }
-
 }

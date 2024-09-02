@@ -8,12 +8,14 @@ class PersonListState extends Equatable {
   final PersonListActionEnum action;
   final PersonModel? selectedItem;
   final PlatformTypeEnum? platformType;
+  final bool isLoading;
 
   const PersonListState({
     this.reloadList = false,
     this.action = PersonListActionEnum.initial,
     this.selectedItem,
     this.platformType,
+    this.isLoading = false,
   });
 
   PersonListState copyWith({
@@ -21,12 +23,14 @@ class PersonListState extends Equatable {
     PersonListActionEnum? action,
     PersonModel? selectedItem,
     PlatformTypeEnum? platformType,
+    bool? isLoading,
   }) =>
       PersonListState(
         reloadList: reloadList ?? this.reloadList,
         action: action ?? this.action,
         selectedItem: selectedItem ?? this.selectedItem,
         platformType: platformType ?? this.platformType,
+        isLoading: isLoading ?? this.isLoading,
       );
 
   @override
@@ -35,5 +39,6 @@ class PersonListState extends Equatable {
         action,
         selectedItem,
         platformType,
+        isLoading,
       ];
 }
