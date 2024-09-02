@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
-class UserListScreen extends StatelessWidget {
-  const UserListScreen({super.key});
+class PersonListScreen extends StatelessWidget {
+  const PersonListScreen({super.key});
 
   static String routeName = "/userList";
 
