@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutterexamapp/features/domain/model/person_model.dart';
-import 'package:flutterexamapp/features/domain/usercase/person_list_feature_usecase.dart';
+import 'package:flutterexamapp/features/domain/usecase/person_list_feature_usecase.dart';
 import 'package:flutterexamapp/features/presentation/person_list_screen/bloc/person_list_state.dart';
 
 enum PersonListActionEnum {

@@ -7,10 +7,10 @@ import 'package:flutterexamapp/features/data/repository/person_repository_impl.d
 import 'package:flutterexamapp/features/data/repository/platform_repository_impl.dart';
 import 'package:flutterexamapp/features/domain/repository/person_repository.dart';
 import 'package:flutterexamapp/features/domain/repository/platform_repository.dart';
-import 'package:flutterexamapp/features/domain/usercase/person/get_initial_person_list.dart';
-import 'package:flutterexamapp/features/domain/usercase/person/get_next_person_list.dart';
-import 'package:flutterexamapp/features/domain/usercase/person_list_feature_usecase.dart';
-import 'package:flutterexamapp/features/domain/usercase/platform/get_platform_type.dart';
+import 'package:flutterexamapp/features/domain/usecase/person/get_initial_person_list.dart';
+import 'package:flutterexamapp/features/domain/usecase/person/get_next_person_list.dart';
+import 'package:flutterexamapp/features/domain/usecase/person_list_feature_usecase.dart';
+import 'package:flutterexamapp/features/domain/usecase/platform/get_platform_type.dart';
 import 'package:flutterexamapp/features/presentation/person_list_screen/bloc/person_list_bloc.dart';
 import 'package:get_it/get_it.dart';
 
