@@ -19,7 +19,8 @@ class PersonRepositoryImpl extends PersonRepository {
   int getAttemptCounter = 0;
 
   @override
-  Future<Either<FailedModel, SuccessModel<List<PersonModel>>>> getInitialPersonList() async {
+  Future<Either<FailedModel, SuccessModel<List<PersonModel>>>>
+      getInitialPersonList() async {
     personList.clear();
     getAttemptCounter = 0;
     final result = await personDataSource.getPersonList();
@@ -39,29 +40,36 @@ class PersonRepositoryImpl extends PersonRepository {
   }
 
   @override
-  Future<Either<FailedModel, SuccessModel<List<PersonModel>>>> getNextPersonList() async {
+  Future<Either<FailedModel, SuccessModel<List<PersonModel>>>>
+      getNextPersonList() async {
     if (getAttemptCounter <= Constants.MAX_API_REQUEST) {
       final totalItemsLoaded = Constants.MAX_DISPLAY_ITEM * getAttemptCounter;
       if (totalItemsLoaded == personList.length) {
         final result = await personDataSource.getPersonList();
-        final list = result.data!.map((e) => e.mapToPersonModel()).toList();
-        personList.addAll(list);
+        if (result.isSuccess) {
+          final list = result.data!.map((e) => e.mapToPersonModel()).toList();
+          personList.addAll(list);
+          getAttemptCounter++;
+          return Right(
+            SuccessModel(
+              data: list.take(Constants.MAX_DISPLAY_ITEM).toList(),
+              hasNextPage: true,
+            ),
+          );
+        }
+      } else {
+        final list = personList
+            .skip(totalItemsLoaded)
+            .take(Constants.MAX_DISPLAY_ITEM)
+            .toList();
         getAttemptCounter++;
         return Right(
           SuccessModel(
-            data: list.take(Constants.MAX_DISPLAY_ITEM).toList(),
-            hasNextPage: true,
+            data: list,
+            hasNextPage: getAttemptCounter < Constants.MAX_API_REQUEST,
           ),
         );
       }
-      final list = personList.skip(totalItemsLoaded).take(Constants.MAX_DISPLAY_ITEM).toList();
-      getAttemptCounter++;
-      return Right(
-        SuccessModel(
-          data: list,
-          hasNextPage: getAttemptCounter < Constants.MAX_API_REQUEST,
-        ),
-      );
     }
     return const Left(
       FailedModel(
