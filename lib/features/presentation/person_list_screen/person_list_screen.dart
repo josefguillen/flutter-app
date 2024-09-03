@@ -213,9 +213,11 @@ class _Actions extends StatelessWidget {
             context.pushNamed(PersonDetailsScreen.routeName, extra: item);
             break;
           case PersonListActionEnum.refreshFinish:
+            refreshController.resetNoData();
             refreshController.refreshCompleted();
             break;
           case PersonListActionEnum.refreshFailed:
+            refreshController.resetNoData();
             refreshController.refreshFailed();
             break;
           case PersonListActionEnum.nextPageFinish:
