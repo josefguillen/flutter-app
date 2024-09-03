@@ -59,7 +59,7 @@ class PersonRepositoryImpl extends PersonRepository {
       return Right(
         SuccessModel(
           data: list,
-          hasNextPage: getAttemptCounter > Constants.MAX_API_REQUEST,
+          hasNextPage: getAttemptCounter < Constants.MAX_API_REQUEST,
         ),
       );
     }

@@ -11,6 +11,8 @@ class PersonListState extends Equatable {
   final bool isLoading;
   final bool isError;
   final String message;
+  final bool allowPullDown;
+  final bool allowPullUp;
   final bool hasMoreData;
 
   const PersonListState({
@@ -21,6 +23,8 @@ class PersonListState extends Equatable {
     this.isLoading = false,
     this.isError = false,
     this.message = "",
+    this.allowPullDown = false,
+    this.allowPullUp = false,
     this.hasMoreData = false,
   });
 
@@ -32,6 +36,8 @@ class PersonListState extends Equatable {
     bool? isLoading,
     bool? isError,
     String? message,
+    bool? allowPullDown,
+    bool? allowPullUp,
     bool? hasMoreData,
   }) =>
       PersonListState(
@@ -42,6 +48,8 @@ class PersonListState extends Equatable {
         isLoading: isLoading ?? this.isLoading,
         isError: isError ?? this.isError,
         message: message ?? this.message,
+        allowPullDown: allowPullDown ?? this.allowPullDown,
+        allowPullUp: allowPullUp ?? this.allowPullUp,
         hasMoreData: hasMoreData ?? this.hasMoreData,
       );
 
@@ -54,6 +62,8 @@ class PersonListState extends Equatable {
         isLoading,
         isError,
         message,
+        allowPullDown,
+        allowPullUp,
         hasMoreData,
       ];
 }

@@ -33,7 +33,8 @@ class PersonListScreen extends StatelessWidget {
           prev.platformType != current.platformType ||
           prev.isLoading != current.isLoading ||
           prev.isError != current.isError ||
-          prev.hasMoreData != current.hasMoreData,
+          prev.allowPullUp != current.allowPullUp ||
+          prev.allowPullDown != current.allowPullDown,
       builder: (context, state) {
         if (state.platformType == PlatformTypeEnum.notSupported) {
           return const AppNotSupportedWidget();
@@ -48,8 +49,8 @@ class PersonListScreen extends StatelessWidget {
             controller: scrollController,
             thickness: 3.w,
             child: SmartRefresher(
-              enablePullDown: true,
-              enablePullUp: state.hasMoreData,
+              enablePullDown: state.allowPullDown,
+              enablePullUp: state.allowPullUp,
               scrollController: scrollController,
               controller: refreshController,
               onRefresh: bloc.onRefresh,
@@ -147,14 +148,6 @@ class _BottomIndicatorWidget extends StatelessWidget {
 class _Actions extends StatelessWidget {
   const _Actions();
 
-  void scrollToBottom() {
-    scrollController.animateTo(
-      scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeOut,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<PersonListBloc, PersonListState>(
@@ -180,10 +173,12 @@ class _Actions extends StatelessWidget {
             break;
           case PersonListActionEnum.nextPageFailed:
             refreshController.loadFailed();
-            scrollToBottom();
             break;
           case PersonListActionEnum.nextPageLoading:
             refreshController.requestLoading();
+            break;
+          case PersonListActionEnum.nextPageNoData:
+            refreshController.loadNoData();
             break;
         }
       },

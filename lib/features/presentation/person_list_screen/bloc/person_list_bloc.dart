@@ -12,6 +12,7 @@ enum PersonListActionEnum {
   nextPageLoading,
   nextPageFinish,
   nextPageFailed,
+  nextPageNoData,
 }
 
 class PersonListBloc extends Cubit<PersonListState> {
@@ -27,6 +28,7 @@ class PersonListBloc extends Cubit<PersonListState> {
     final platformType = personListFeatureUseCase.getPlatformType.invoke();
     emit(state.copyWith(platformType: platformType));
     if (platformType != PlatformTypeEnum.notSupported) {
+      emit(state.copyWith(allowPullDown: true));
       populateInitList(fromInit: true);
     }
   }
@@ -58,9 +60,15 @@ class PersonListBloc extends Cubit<PersonListState> {
         emit(
           state.copyWith(
             reloadList: !state.reloadList,
-            action: !fromInit ? PersonListActionEnum.refreshFinish : PersonListActionEnum.initial,
+            action: !fromInit
+                ? success.hasNextPage
+                    ? PersonListActionEnum.refreshFinish
+                    : PersonListActionEnum.nextPageNoData
+                : PersonListActionEnum.initial,
             isLoading: false,
             isError: false,
+            allowPullUp:
+                state.platformType == PlatformTypeEnum.browser ? false : success.hasNextPage,
             hasMoreData: success.hasNextPage,
           ),
         );
@@ -85,8 +93,12 @@ class PersonListBloc extends Cubit<PersonListState> {
         emit(
           state.copyWith(
             reloadList: !state.reloadList,
+            allowPullUp:
+                state.platformType == PlatformTypeEnum.browser ? false : success.hasNextPage,
+            action: success.hasNextPage
+                ? PersonListActionEnum.nextPageFinish
+                : PersonListActionEnum.nextPageNoData,
             hasMoreData: success.hasNextPage,
-            action: PersonListActionEnum.nextPageFinish,
           ),
         );
       },
