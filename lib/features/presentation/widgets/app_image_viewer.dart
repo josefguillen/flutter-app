@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutterexamapp/core/constants/colors.dart';
 
 class AppImageViewer extends StatelessWidget {
   final String imageUrl;
@@ -18,6 +19,19 @@ class AppImageViewer extends StatelessWidget {
     super.key,
   });
 
+  Decoration decoration() {
+    return const BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          imagePlaceHolderPrimary,
+          imagePlaceHolderSecondary,
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final progressH = progressHeight ?? 10.h;
@@ -33,7 +47,7 @@ class AppImageViewer extends StatelessWidget {
           return Container(
             width: width,
             height: height,
-            color: Colors.black12,
+            decoration: decoration(),
             child: Center(
               child: SizedBox(
                 width: progressW,
@@ -49,7 +63,7 @@ class AppImageViewer extends StatelessWidget {
           return Container(
             width: width,
             height: height,
-            color: Colors.black12,
+            decoration: decoration(),
           );
         },
       ),

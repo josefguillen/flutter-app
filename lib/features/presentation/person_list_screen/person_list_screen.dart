@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutterexamapp/core/constants/colors.dart';
 import 'package:flutterexamapp/core/constants/strings.dart';
 import 'package:flutterexamapp/core/enums/platform_type_enum.dart';
 import 'package:flutterexamapp/features/domain/model/person_model.dart';
@@ -12,6 +13,7 @@ import 'package:flutterexamapp/features/presentation/person_list_screen/bloc/per
 import 'package:flutterexamapp/features/presentation/widgets/app_image_viewer.dart';
 import 'package:flutterexamapp/features/presentation/widgets/app_not_supported_widget.dart';
 import 'package:flutterexamapp/features/presentation/widgets/app_scaffold.dart';
+import 'package:flutterexamapp/features/presentation/widgets/app_shader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
@@ -148,8 +150,7 @@ class _BottomIndicatorWidget extends StatelessWidget {
               ),
             ),
           );
-        }
-        else if (state.platformType == PlatformTypeEnum.browser && state.isLoadMoreError) {
+        } else if (state.platformType == PlatformTypeEnum.browser && state.isLoadMoreError) {
           return Container(
             padding: EdgeInsets.symmetric(vertical: 10.h),
             color: Colors.transparent,
@@ -166,8 +167,7 @@ class _BottomIndicatorWidget extends StatelessWidget {
               ],
             ),
           );
-        }
-        else if (state.platformType == PlatformTypeEnum.browser && state.hasMoreData) {
+        } else if (state.platformType == PlatformTypeEnum.browser && state.hasMoreData) {
           return Container(
             padding: EdgeInsets.symmetric(vertical: 10.h),
             color: Colors.transparent,
@@ -280,6 +280,7 @@ class _ListItem extends StatelessWidget {
       child: SizedBox(
         height: 100.h,
         child: Card(
+          color: Colors.white,
           elevation: 3.h,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15), // Rounded corners
@@ -289,21 +290,43 @@ class _ListItem extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                AppImageViewer(imageUrl: data.image, width: 80.w, height: 80.h),
+                AppImageViewer(imageUrl: data.image, width: 80.h, height: 80.h),
                 SizedBox(width: 10.w),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "${data.firstName} ${data.lastName}",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.sp,
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 200.w,
+                        child: Text(
+                          "${data.firstName} ${data.lastName}",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13.h,
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
-                    ),
-                    Text(data.email),
-                  ],
+                      SizedBox(
+                        width: 200.w,
+                        child: Text(
+                          data.email,
+                          style: TextStyle(
+                            fontSize: 10.h,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 5.w),
+                AppShader(
+                  widget: Icon(
+                    Icons.keyboard_arrow_right,
+                    size: 25.h,
+                  ),
                 ),
               ],
             ),
