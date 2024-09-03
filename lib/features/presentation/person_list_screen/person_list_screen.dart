@@ -14,6 +14,7 @@ import 'package:flutterexamapp/features/presentation/widgets/app_image_viewer.da
 import 'package:flutterexamapp/features/presentation/widgets/app_not_supported_widget.dart';
 import 'package:flutterexamapp/features/presentation/widgets/app_scaffold.dart';
 import 'package:flutterexamapp/features/presentation/widgets/app_shader.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
@@ -347,6 +348,10 @@ class _Actions extends StatelessWidget {
             refreshController.refreshCompleted();
             break;
           case PersonListActionEnum.refreshFailed:
+            Fluttertoast.showToast(
+              msg: state.message,
+              toastLength: Toast.LENGTH_SHORT,
+            );
             refreshController.resetNoData();
             refreshController.refreshFailed();
             break;

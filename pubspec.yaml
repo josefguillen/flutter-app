@@ -50,6 +50,7 @@ dependencies:
   universal_platform: ^1.1.0
   pull_to_refresh_flutter3: ^2.0.2
   url_launcher: ^6.3.0
+  fluttertoast: ^8.2.8
 
 dev_dependencies:
   flutter_test:
