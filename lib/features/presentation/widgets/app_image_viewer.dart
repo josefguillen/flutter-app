@@ -53,7 +53,7 @@ class AppImageViewer extends StatelessWidget {
                 width: progressW,
                 height: progressH,
                 child: CircularProgressIndicator(
-                  strokeWidth: 2.w,
+                  strokeWidth: 2.5.h,
                 ),
               ),
             ),

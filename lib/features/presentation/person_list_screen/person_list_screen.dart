@@ -51,6 +51,7 @@ class PersonListScreen extends StatelessWidget {
             controller: scrollController,
             thickness: 1.5.h,
             child: SmartRefresher(
+              physics: const BouncingScrollPhysics(),
               enablePullDown: state.allowPullDown,
               enablePullUp: state.allowPullUp,
               scrollController: scrollController,
