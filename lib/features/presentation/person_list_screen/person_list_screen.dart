@@ -57,6 +57,9 @@ class PersonListScreen extends StatelessWidget {
               controller: refreshController,
               onRefresh: bloc.onRefresh,
               onLoading: bloc.onLoadMore,
+              header: const WaterDropMaterialHeader(
+                backgroundColor: colorSecondary,
+              ),
               footer: CustomFooter(
                 builder: (context, mode) {
                   if (mode == LoadStatus.idle) {
