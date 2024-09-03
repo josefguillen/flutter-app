@@ -14,6 +14,8 @@ class PersonListState extends Equatable {
   final bool allowPullDown;
   final bool allowPullUp;
   final bool hasMoreData;
+  final bool isLoadMoreOngoing;
+  final bool isLoadMoreError;
 
   const PersonListState({
     this.reloadList = false,
@@ -26,6 +28,8 @@ class PersonListState extends Equatable {
     this.allowPullDown = false,
     this.allowPullUp = false,
     this.hasMoreData = false,
+    this.isLoadMoreOngoing = false,
+    this.isLoadMoreError = false,
   });
 
   PersonListState copyWith({
@@ -39,6 +43,8 @@ class PersonListState extends Equatable {
     bool? allowPullDown,
     bool? allowPullUp,
     bool? hasMoreData,
+    bool? isLoadMoreOngoing,
+    bool? isLoadMoreError,
   }) =>
       PersonListState(
         reloadList: reloadList ?? this.reloadList,
@@ -51,6 +57,8 @@ class PersonListState extends Equatable {
         allowPullDown: allowPullDown ?? this.allowPullDown,
         allowPullUp: allowPullUp ?? this.allowPullUp,
         hasMoreData: hasMoreData ?? this.hasMoreData,
+        isLoadMoreOngoing: isLoadMoreOngoing ?? this.isLoadMoreOngoing,
+        isLoadMoreError: isLoadMoreError ?? this.isLoadMoreError,
       );
 
   @override
@@ -65,5 +73,7 @@ class PersonListState extends Equatable {
         allowPullDown,
         allowPullUp,
         hasMoreData,
+        isLoadMoreOngoing,
+        isLoadMoreError,
       ];
 }

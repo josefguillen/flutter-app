@@ -78,6 +78,12 @@ class PersonListBloc extends Cubit<PersonListState> {
   }
 
   Future<void> populateNextList() async {
+    emit(
+      state.copyWith(
+        isLoadMoreOngoing: true,
+        isLoadMoreError: false,
+      ),
+    );
     final result = await personListFeatureUseCase.getNextPersonList.invoke();
     result.fold(
       (failed) {
@@ -85,6 +91,8 @@ class PersonListBloc extends Cubit<PersonListState> {
           state.copyWith(
             message: failed.message,
             action: PersonListActionEnum.nextPageFailed,
+            isLoadMoreOngoing: false,
+            isLoadMoreError: true,
           ),
         );
       },
@@ -99,6 +107,7 @@ class PersonListBloc extends Cubit<PersonListState> {
                 ? PersonListActionEnum.nextPageFinish
                 : PersonListActionEnum.nextPageNoData,
             hasMoreData: success.hasNextPage,
+            isLoadMoreOngoing: false,
           ),
         );
       },

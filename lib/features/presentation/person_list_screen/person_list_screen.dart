@@ -124,10 +124,58 @@ class _BottomIndicatorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.read<PersonListBloc>();
     return BlocBuilder<PersonListBloc, PersonListState>(
-      buildWhen: (prev, current) => prev.hasMoreData != current.hasMoreData,
+      buildWhen: (prev, current) =>
+          prev.hasMoreData != current.hasMoreData ||
+          prev.platformType != current.platformType ||
+          prev.isLoadMoreError != current.isLoadMoreError ||
+          prev.isLoadMoreOngoing != current.isLoadMoreOngoing,
       builder: (context, state) {
-        if (!state.hasMoreData) {
+        if (state.platformType == PlatformTypeEnum.browser && state.isLoadMoreOngoing) {
+          return Container(
+            padding: EdgeInsets.symmetric(vertical: 10.h),
+            color: Colors.transparent,
+            height: 40.h,
+            alignment: Alignment.center,
+            child: SizedBox(
+              width: 20.h,
+              height: 20.h,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.w,
+              ),
+            ),
+          );
+        }
+        else if (state.platformType == PlatformTypeEnum.browser && state.isLoadMoreError) {
+          return Container(
+            padding: EdgeInsets.symmetric(vertical: 10.h),
+            color: Colors.transparent,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(state.message),
+                SizedBox(height: 5.h),
+                TextButton(
+                  onPressed: bloc.onLoadMore,
+                  child: const Text(Strings.retry),
+                ),
+              ],
+            ),
+          );
+        }
+        else if (state.platformType == PlatformTypeEnum.browser && state.hasMoreData) {
+          return Container(
+            padding: EdgeInsets.symmetric(vertical: 10.h),
+            color: Colors.transparent,
+            height: 40.h,
+            child: TextButton(
+              onPressed: bloc.onLoadMore,
+              child: const Text(Strings.loadMore),
+            ),
+          );
+        } else if (!state.hasMoreData) {
           return Container(
             alignment: Alignment.center,
             height: 40.h,
