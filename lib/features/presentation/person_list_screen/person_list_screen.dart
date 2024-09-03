@@ -72,6 +72,8 @@ class PersonListScreen extends StatelessWidget {
         }
         return AppScaffold(
           title: Strings.titlePersonList.toUpperCase(),
+          showRefreshButton: state.platformType == PlatformTypeEnum.browser,
+          onRefreshPress: () => bloc.onRefresh(fromInit: true),
           body: widget,
         );
       },

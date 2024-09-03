@@ -6,11 +6,15 @@ class AppScaffold extends StatelessWidget {
   final String title;
   final Widget body;
   final bool showBackButton;
+  final bool showRefreshButton;
+  final Function()? onRefreshPress;
 
   const AppScaffold({
     required this.title,
     required this.body,
     this.showBackButton = false,
+    this.showRefreshButton = false,
+    this.onRefreshPress,
     super.key,
   });
 
@@ -43,6 +47,21 @@ class AppScaffold extends StatelessWidget {
               },
             ),
           ),
+          actions: [
+            Visibility(
+              visible: showRefreshButton,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.refresh,
+                  ),
+                  onPressed: () {
+                    if (onRefreshPress != null) {
+                      onRefreshPress!();
+                    }
+                  },
+                )
+            ),
+          ],
         ),
         body: SizedBox(width: containerWidth, height: containerHeight, child: body),
       ),

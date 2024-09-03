@@ -125,8 +125,10 @@ class PersonListBloc extends Cubit<PersonListState> {
     emit(state.copyWith(action: PersonListActionEnum.initial));
   }
 
-  Future<void> onRefresh() async {
-    await populateInitList();
+  Future<void> onRefresh({bool fromInit = false}) async {
+    if (!state.isLoading) {
+      await populateInitList(fromInit: fromInit);
+    }
   }
 
   Future<void> onLoadMore() async {
