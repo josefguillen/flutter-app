@@ -49,6 +49,7 @@ dependencies:
   cached_network_image: ^3.4.1
   universal_platform: ^1.1.0
   pull_to_refresh_flutter3: ^2.0.2
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:
