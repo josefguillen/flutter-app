@@ -30,77 +30,86 @@ class PersonListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<PersonListBloc>();
-    return BlocBuilder<PersonListBloc, PersonListState>(
-      buildWhen: (prev, current) =>
-          prev.platformType != current.platformType ||
-          prev.isLoading != current.isLoading ||
-          prev.isError != current.isError ||
-          prev.allowPullUp != current.allowPullUp ||
-          prev.allowPullDown != current.allowPullDown,
-      builder: (context, state) {
-        if (state.platformType == PlatformTypeEnum.notSupported) {
-          return const AppNotSupportedWidget();
-        }
-        Widget? widget;
-        if (state.isLoading) {
-          widget = const _Loading();
-        } else if (state.isError) {
-          widget = const _ErrorLoadWidget();
-        } else {
-          widget = Scrollbar(
-            controller: scrollController,
-            thickness: 1.5.h,
-            child: SmartRefresher(
-              physics: const BouncingScrollPhysics(),
-              enablePullDown: state.allowPullDown,
-              enablePullUp: state.allowPullUp,
-              scrollController: scrollController,
-              controller: refreshController,
-              onRefresh: bloc.onRefresh,
-              onLoading: bloc.onLoadMore,
-              header: const WaterDropMaterialHeader(
-                backgroundColor: colorSecondary,
-              ),
-              footer: CustomFooter(
-                builder: (context, mode) {
-                  if (mode == LoadStatus.idle) {
-                    return const _BottomPullMessageIndicator(message: Strings.pullUpToLoad);
-                  } else if (mode == LoadStatus.loading) {
-                    return const _BottomLoadingIndicator();
-                  } else if (mode == LoadStatus.failed) {
-                    return const _BottomErrorIndicator(
-                      message: "${Strings.somethingWentWrong}\n${Strings.pullUpToRetry}",
-                      showRetryButton: false,
-                    );
-                  } else if (mode == LoadStatus.canLoading) {
-                    return const _BottomPullMessageIndicator(message: Strings.releaseToLoadMore);
-                  } else {
-                    return const SizedBox();
-                  }
-                },
-              ),
-              child: SingleChildScrollView(
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
-                  child: const Column(
-                    children: [
-                      _Actions(),
-                      _ListContainer(),
-                      _BottomIndicatorWidget(),
-                    ],
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        final horizontalPadding = orientation == Orientation.portrait ? 15.w : 80.w;
+        final verticalPadding = 15.h;
+        return BlocBuilder<PersonListBloc, PersonListState>(
+          buildWhen: (prev, current) =>
+              prev.platformType != current.platformType ||
+              prev.isLoading != current.isLoading ||
+              prev.isError != current.isError ||
+              prev.allowPullUp != current.allowPullUp ||
+              prev.allowPullDown != current.allowPullDown,
+          builder: (context, state) {
+            if (state.platformType == PlatformTypeEnum.notSupported) {
+              return const AppNotSupportedWidget();
+            }
+            Widget? widget;
+            if (state.isLoading) {
+              widget = const _Loading();
+            } else if (state.isError) {
+              widget = const _ErrorLoadWidget();
+            } else {
+              widget = Scrollbar(
+                controller: scrollController,
+                thickness: 1.5.h,
+                child: SmartRefresher(
+                  physics: const BouncingScrollPhysics(),
+                  enablePullDown: state.allowPullDown,
+                  enablePullUp: state.allowPullUp,
+                  scrollController: scrollController,
+                  controller: refreshController,
+                  onRefresh: bloc.onRefresh,
+                  onLoading: bloc.onLoadMore,
+                  header: const WaterDropMaterialHeader(
+                    backgroundColor: colorSecondary,
+                  ),
+                  footer: CustomFooter(
+                    builder: (context, mode) {
+                      if (mode == LoadStatus.idle) {
+                        return const _BottomPullMessageIndicator(message: Strings.pullUpToLoad);
+                      } else if (mode == LoadStatus.loading) {
+                        return const _BottomLoadingIndicator();
+                      } else if (mode == LoadStatus.failed) {
+                        return const _BottomErrorIndicator(
+                          message: "${Strings.somethingWentWrong}\n${Strings.pullUpToRetry}",
+                          showRetryButton: false,
+                        );
+                      } else if (mode == LoadStatus.canLoading) {
+                        return const _BottomPullMessageIndicator(message: Strings.releaseToLoadMore);
+                      } else {
+                        return const SizedBox();
+                      }
+                    },
+                  ),
+                  child: SingleChildScrollView(
+                    child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
+                      vertical: verticalPadding,
+                    ),
+                    child: const Column(
+                        children: [
+                          _Actions(),
+                          _ListContainer(),
+                          _BottomIndicatorWidget(),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          );
-        }
-        return AppScaffold(
-          title: Strings.titlePersonList.toUpperCase(),
-          showRefreshButton: state.platformType == PlatformTypeEnum.browser,
-          onRefreshPress: () => bloc.onRefresh(fromInit: true),
-          body: widget,
+              );
+            }
+            return AppScaffold(
+              title: Strings.titlePersonList.toUpperCase(),
+              showRefreshButton: state.platformType == PlatformTypeEnum.browser,
+              onRefreshPress: () => bloc.onRefresh(fromInit: true),
+              body: widget,
+            );
+          },
         );
-      },
+      }
     );
   }
 }
@@ -407,7 +416,7 @@ class _ListItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(15), // Rounded corners
           ),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            padding: EdgeInsets.only(left: 10.h, right: 10.h),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
