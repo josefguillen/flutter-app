@@ -49,7 +49,7 @@ class PersonListScreen extends StatelessWidget {
         } else {
           widget = Scrollbar(
             controller: scrollController,
-            thickness: 3.w,
+            thickness: 1.5.h,
             child: SmartRefresher(
               enablePullDown: state.allowPullDown,
               enablePullUp: state.allowPullUp,
@@ -57,6 +57,24 @@ class PersonListScreen extends StatelessWidget {
               controller: refreshController,
               onRefresh: bloc.onRefresh,
               onLoading: bloc.onLoadMore,
+              footer: CustomFooter(
+                builder: (context, mode) {
+                  if (mode == LoadStatus.idle) {
+                    return const _BottomPullMessageIndicator(message: Strings.pullUpToLoad);
+                  } else if (mode == LoadStatus.loading) {
+                    return const _BottomLoadingIndicator();
+                  } else if (mode == LoadStatus.failed) {
+                    return const _BottomErrorIndicator(
+                      message: "${Strings.somethingWentWrong}\n${Strings.pullUpToRetry}",
+                      showRetryButton: false,
+                    );
+                  } else if (mode == LoadStatus.canLoading) {
+                    return const _BottomPullMessageIndicator(message: Strings.releaseToLoadMore);
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              ),
               child: SingleChildScrollView(
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
@@ -92,8 +110,10 @@ class _Loading extends StatelessWidget {
       child: SizedBox(
         width: 20.h,
         height: 20.h,
-        child: CircularProgressIndicator(
-          strokeWidth: 2.w,
+        child: AppShader(
+          widget: CircularProgressIndicator(
+            strokeWidth: 2.5.h,
+          ),
         ),
       ),
     );
@@ -110,13 +130,26 @@ class _ErrorLoadWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(bloc.state.message),
-        SizedBox(height: 5.h),
+        Text(
+          bloc.state.message,
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 12.5.h,
+          ),
+        ),
+        SizedBox(height: 10.h),
         ElevatedButton(
           onPressed: () {
             bloc.populateInitList(fromInit: true);
           },
-          child: const Text(Strings.retry),
+          child: AppShader(
+            widget: Text(
+              Strings.retry,
+              style: TextStyle(
+                fontSize: 12.5.h,
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -137,36 +170,9 @@ class _BottomIndicatorWidget extends StatelessWidget {
           prev.isLoadMoreOngoing != current.isLoadMoreOngoing,
       builder: (context, state) {
         if (state.platformType == PlatformTypeEnum.browser && state.isLoadMoreOngoing) {
-          return Container(
-            padding: EdgeInsets.symmetric(vertical: 10.h),
-            color: Colors.transparent,
-            height: 40.h,
-            alignment: Alignment.center,
-            child: SizedBox(
-              width: 20.h,
-              height: 20.h,
-              child: CircularProgressIndicator(
-                strokeWidth: 2.w,
-              ),
-            ),
-          );
+          return const _BottomLoadingIndicator();
         } else if (state.platformType == PlatformTypeEnum.browser && state.isLoadMoreError) {
-          return Container(
-            padding: EdgeInsets.symmetric(vertical: 10.h),
-            color: Colors.transparent,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(state.message),
-                SizedBox(height: 5.h),
-                TextButton(
-                  onPressed: bloc.onLoadMore,
-                  child: const Text(Strings.retry),
-                ),
-              ],
-            ),
-          );
+          return _BottomErrorIndicator(message: state.message);
         } else if (state.platformType == PlatformTypeEnum.browser && state.hasMoreData) {
           return Container(
             padding: EdgeInsets.symmetric(vertical: 10.h),
@@ -174,23 +180,134 @@ class _BottomIndicatorWidget extends StatelessWidget {
             height: 40.h,
             child: TextButton(
               onPressed: bloc.onLoadMore,
-              child: const Text(Strings.loadMore),
-            ),
-          );
-        } else if (!state.hasMoreData) {
-          return Container(
-            alignment: Alignment.center,
-            height: 40.h,
-            child: const Text(
-              Strings.noMoreItemsToLoad,
-              style: TextStyle(
-                color: Colors.grey,
+              child: AppShader(
+                widget: Text(
+                  Strings.loadMore,
+                  style: TextStyle(
+                    fontSize: 12.5.h,
+                  ),
+                ),
               ),
             ),
           );
+        } else if (!state.hasMoreData) {
+          return const _BottomNoDataIndicator();
         }
         return const SizedBox();
       },
+    );
+  }
+}
+
+class _BottomLoadingIndicator extends StatelessWidget {
+  const _BottomLoadingIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      //padding: EdgeInsets.symmetric(vertical: 5.h),
+      color: Colors.transparent,
+      height: 40.h,
+      alignment: Alignment.center,
+      child: SizedBox(
+        width: 20.h,
+        height: 20.h,
+        child: AppShader(
+          widget: CircularProgressIndicator(
+            strokeWidth: 2.3.h,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BottomErrorIndicator extends StatelessWidget {
+  final String message;
+  final bool showRetryButton;
+
+  const _BottomErrorIndicator({
+    required this.message,
+    this.showRetryButton = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = context.read<PersonListBloc>();
+    final vPadding = bloc.state.platformType == PlatformTypeEnum.browser ? 5.h : 0.h;
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: vPadding),
+      color: Colors.transparent,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 12.5.h,
+            ),
+          ),
+          if (showRetryButton)
+            SizedBox(height: 2.h),
+          if (showRetryButton)
+            TextButton(
+              onPressed: bloc.onLoadMore,
+              child: AppShader(
+                widget: Text(
+                  Strings.retry,
+                  style: TextStyle(fontSize: 12.5.h),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BottomNoDataIndicator extends StatelessWidget {
+  const _BottomNoDataIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      height: 40.h,
+      child: Text(
+        Strings.noMoreItemsToLoad,
+        style: TextStyle(
+          color: Colors.grey,
+          fontSize: 12.5.h,
+        ),
+      ),
+    );
+  }
+}
+
+class _BottomPullMessageIndicator extends StatelessWidget {
+  final String message;
+
+  const _BottomPullMessageIndicator({
+    required this.message,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 40.h,
+      child: Center(
+        child: AppShader(
+          widget: Text(
+            message,
+            style: TextStyle(
+              fontSize: 12.5.h,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
